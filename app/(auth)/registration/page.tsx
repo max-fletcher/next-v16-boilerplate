@@ -1,18 +1,15 @@
-// import { TAuthType } from '@/constants/enums'
-// import AuthForm from '@/components/AuthForm'
-
-// const signIn = () => {
-//   return (
-//     <section className="flex-center size-full max-sm:px-6">
-//       <AuthForm type={TAuthType.SIGN_UP} />
-//     </section>
-//   )
-// }
+import AuthForm from '@/components/AuthForm'
+import { TAuthType } from '@/constants/enums'
 
 // export default signIn
 
 const Registration = () => {
-  return <div>Registration</div>;
-};
+  ;<>
+    <section className="">
+      Registration
+      <AuthForm type={TAuthType.LOGIN} />
+    </section>
+  </>
+}
 
-export default Registration;
+export default Registration
