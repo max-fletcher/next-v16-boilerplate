@@ -99,44 +99,20 @@ const AuthForm = ({ type }: { type: TAuthType }) => {
           <Image className="object-cover w-full h-auto" src="/icons/logo.svg" width={1176} height={868} alt="Logo" />
         </div>
         {/* register content para */}
-        <p className="font-normal leading-[1.4] mb-2">{isRegistration ? 'Get Started Now' : 'Welcome back'}</p>
+        <p className="font-normal text-auth-form-title leading-[1.4] mb-2">{isRegistration ? 'Get Started Now' : 'Welcome back'}</p>
         {/* register title */}
-        <h4 className="text-[22px] mb-12.5">{isRegistration ? 'Registration' : 'Login to your account'}</h4>
-        <Button className="bg-white border-1px border-background text-[13px] font-medium text-black px-15 py-5.5 mb-10">Register with google</Button>
-
-        {/* <div
-          className="
-            relative 
-            text-or-streak
-            before:content-['']
-            before:absolute
-            before:left-0
-            before:top-1/2
-            before:w-[108px]
-            before:h-[2px]
-            before:bg-or-streak
-            before:rounded-[6px]
-            after:content-['']
-            after:absolute
-            after:right-0
-            after:top-1/2
-            after:w-[108px]
-            after:h-[2px]
-            after:bg-or-streak
-            after:rounded-[6px]
-          "
-        >
-          Or
-        </div> */}
-
-        <div className="flex items-center gap-4">
-          <div className="h-[2px] flex-1 bg-or-streak" />
-          <span className="text-or-streak font-medium">OR</span>
-          <div className="h-[2px] flex-1 bg-or-streak" />
+        <h4 className="text-[22px] font-medium text-auth-form-title mb-12.5">{isRegistration ? 'Registration' : 'Login to your account'}</h4>
+        <Button className="bg-white border-1px border-background text-base font-medium text-auth-form-title rounded-md px-15 py-5.5 mb-10">
+          {isRegistration ? 'Get Started Now' : 'Or sign-in with google'}
+        </Button>
+        <div className="flex items-center gap-4 mb-10">
+          <div className="h-[1.8px] flex-1 bg-or-streak" />
+          <span className="text-or-streak font-medium">Or</span>
+          <div className="h-[1.8px] flex-1 bg-or-streak" />
         </div>
       </header>
 
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 p-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         {isRegistration && (
           <>
             <CustomInput control={form.control} name="firstName" label="First Name" placeholder="Enter your first name" type="text" />

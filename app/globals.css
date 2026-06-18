@@ -5,7 +5,13 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --color-or-streak: #dfdfdf;
+  --color-or-streak: #DFDFDF;
+  --color-custom-label: #4A5568;
+  --font-poppins: var(--font-poppins);
+  --color-custom-label: #4A5568;
+  --color-auth-form-title: #3B3F43;
+  --color-rest-blue: #1890FF;
+  --color-muted: #F5F5F5;
 }
 
 @theme inline {

@@ -19,8 +19,18 @@ const CustomInput = <T extends FieldValues>({ control, name, label, placeholder,
       control={control}
       render={({ field, fieldState }) => (
         <Field data-invalid={fieldState.invalid}>
-          <FieldLabel htmlFor={field.name}>{label}</FieldLabel>
-          <Input {...field} id={field.name} aria-invalid={fieldState.invalid} placeholder={placeholder} type={type} autoComplete={autoComplete} />
+          <FieldLabel htmlFor={field.name} className="text-base font-medium text-custom-label leading-[1.4]">
+            {label}
+          </FieldLabel>
+          <Input
+            {...field}
+            id={field.name}
+            aria-invalid={fieldState.invalid}
+            placeholder={placeholder}
+            type={type}
+            autoComplete={autoComplete}
+            className="border-muted focus-visible:border-rest-blue h-12 shadow-none focus-visible:ring-0"
+          />
           {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
         </Field>
       )}

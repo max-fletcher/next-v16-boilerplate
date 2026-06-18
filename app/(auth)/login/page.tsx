@@ -7,10 +7,11 @@ const Login = () => {
   return (
     <>
       {/* social_registration_wrapper */}
-      <section className="py-[50px] md:py-[100px] flex justify-center align-center">
-        <div className="max-w-[540px]  md:max-w-[720px] lg:max-w-[960px] xl:max-w-[1140px] grid grid-cols-3 gap-4 items-center p-3">
+      <section className="py-12.5 md:py-25 flex justify-center align-center">
+        <div className="max-w-135  md:max-w-180 lg:max-w-240 xl:max-w-285 grid grid-cols-3 gap-4 md:gap-8 items-center p-3">
           <div className="col-span-3 lg:col-span-2">
-            <Image className="object-cover w-full h-auto" src="/images/registration.png" width={1176} height={868} alt="registration image" />
+            <div className="max-w-165.75"></div>
+            <Image className="object-cover w-auto h-auto" src="/images/login.png" width={1176} height={868} alt="registration image" />
           </div>
           <div className="col-span-3 lg:col-span-1">
             <AuthCard>
