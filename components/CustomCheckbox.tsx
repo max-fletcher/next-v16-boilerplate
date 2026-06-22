@@ -1,6 +1,6 @@
 import { Control, Controller, FieldPath, FieldValues } from 'react-hook-form'
 import { Field, FieldError, FieldLabel } from './ui/field'
-import { Input } from './ui/input'
+import { Checkbox } from './ui/checkbox'
 import { cn } from '@/lib/utils'
 
 // FieldPath<T> is a TypeScript utility type from react-hook-form that resolves to a union of all valid dot-notation path strings for the fields in your form schema T
@@ -12,37 +12,30 @@ import { cn } from '@/lib/utils'
 // }
 // Then FieldPath<SignUpFormType> resolves to: "firstName" | "email" | "password"
 
-interface ICustomInputProps<T extends FieldValues> {
+interface ICustomCheckboxProps<T extends FieldValues> {
   control: Control<T>
-  // NOTE: "email" | "password" would work, but we will need to edit it on adding new fields. Hence, we are taking an inference of what this might be from authForm
   name: FieldPath<T>
   label: string
-  placeholder: string
-  type?: string
-  autoComplete?: string
-  className?: string
   labelClassName?: string
 }
 
-const CustomInput = <T extends FieldValues>({ control, name, label, placeholder, type, autoComplete, className, labelClassName }: ICustomInputProps<T>) => {
+const CustomCheckbox = <T extends FieldValues>({ control, name, label, labelClassName }: ICustomCheckboxProps<T>) => {
   return (
     <Controller
       name={name}
       control={control}
       render={({ field, fieldState }) => (
-        <Field data-invalid={fieldState.invalid} className={className}>
+        <Field orientation="horizontal" data-invalid={fieldState.invalid}>
+          <Checkbox
+            id={field.name}
+            name={name}
+            checked={field.value}
+            onCheckedChange={field.onChange}
+            className="data-checked:bg-rest-blue data-checked:border-rest-blue"
+          />
           <FieldLabel htmlFor={field.name} className={cn('text-base font-medium text-custom-label leading-[1.4]', labelClassName)}>
             {label}
           </FieldLabel>
-          <Input
-            {...field}
-            id={field.name}
-            aria-invalid={fieldState.invalid}
-            placeholder={placeholder}
-            type={type}
-            autoComplete={autoComplete}
-            className="border-muted focus-visible:border-rest-blue h-12 shadow-none focus-visible:ring-0"
-          />
           {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
         </Field>
       )}
@@ -50,4 +43,4 @@ const CustomInput = <T extends FieldValues>({ control, name, label, placeholder,
   )
 }
 
-export default CustomInput
+export default CustomCheckbox

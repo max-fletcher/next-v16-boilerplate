@@ -8,7 +8,12 @@ export const LoginSchema = z.object({
     })
     .nonempty({ error: 'Email is required.' })
     .regex(EmailRegex, { message: 'Invalid email address format' }),
-  password: z.string().nonempty({ error: 'Email is required.' }).min(8, { message: 'Password must be at least 8 characters.' })
+  password: z.string().nonempty({ error: 'Email is required.' }).min(8, { message: 'Password must be at least 8 characters.' }),
+  rememberMe: z
+    .boolean({
+      error: (issue) => (issue.input === undefined ? 'Remember me is required.' : 'Remember me must be a boolean')
+    })
+    .default(true)
 })
 
 export const RegistrationSchema = z
@@ -39,7 +44,12 @@ export const RegistrationSchema = z
       .nonempty({ error: 'Password confirmation is required.' })
       .min(8, {
         message: 'Password confirmation must be at least 8 characters.'
+      }),
+    agreeToTermsAndConditions: z
+      .boolean({
+        error: (issue) => (issue.input === undefined ? 'Agree to terms and conditions is required.' : 'Agree to terms and conditions must be a boolean')
       })
+      .default(false)
   })
   .superRefine(async (data, ctx) => {
     if (data.password !== data.confirmPassword) {
@@ -58,3 +68,4 @@ export const RegistrationSchema = z
 
 export type TLoginData = z.infer<typeof LoginSchema>
 export type TRegistrationData = z.infer<typeof RegistrationSchema>
+export type AuthFormType = TLoginData | TRegistrationData

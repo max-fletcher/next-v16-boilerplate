@@ -7,17 +7,20 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 // import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { useForm } from 'react-hook-form'
+import { Resolver, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 // import { Field } from '@base-ui-components/react/field'
-import { LoginSchema, RegistrationSchema, TLoginData, TRegistrationData } from '@/lib/schema/authForm.schema'
+import { AuthFormType, LoginSchema, RegistrationSchema, TRegistrationData } from '@/lib/schema/authForm.schema'
 import CustomInput from './CustomInput'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
+import CustomCheckbox from './CustomCheckbox'
+import { cn } from '@/lib/utils'
 
 const AuthForm = ({ type }: { type: TAuthType }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [checked, setChecked] = useState(false)
 
   const router = useRouter()
   const { status } = useSession()
@@ -29,22 +32,22 @@ const AuthForm = ({ type }: { type: TAuthType }) => {
     }
   }, [status, router])
 
-  type AuthFormType = TLoginData | TRegistrationData
   const isRegistration = type === TAuthType.REGISTRATION
 
   const formSchema = isRegistration ? RegistrationSchema : LoginSchema
   // 1. Define your form.
   const form = useForm<AuthFormType>({
-    resolver: zodResolver(formSchema),
-    defaultValues: isRegistration
+    resolver: zodResolver(formSchema) as Resolver<AuthFormType>,
+    defaultValues: (isRegistration
       ? {
           firstName: '',
           lastName: '',
           email: '',
           password: '',
-          confirmPassword: ''
+          confirmPassword: '',
+          agreeToTermsAndConditions: true
         }
-      : { email: '', password: '' }
+      : { email: '', password: '', rememberMe: true }) as AuthFormType
   })
 
   // 2. Define a submit handler.
@@ -67,10 +70,11 @@ const AuthForm = ({ type }: { type: TAuthType }) => {
           callbackUrl: '/posts'
         })
       } else {
+        const { email, password } = data
         res = await signIn('credentials', {
           redirect: false,
-          email: data.email,
-          password: data.password,
+          email: email,
+          password: password,
           callbackUrl: '/posts'
         })
       }
@@ -95,16 +99,25 @@ const AuthForm = ({ type }: { type: TAuthType }) => {
     <>
       <header className="flex flex-col text-center">
         {/* auth logo */}
-        <div className="max-w-[161px] mb-7 mx-auto">
+        <div className="max-w-40.25 mb-7 mx-auto">
           <Image className="object-cover w-full h-auto" src="/icons/logo.svg" width={1176} height={868} alt="Logo" />
         </div>
         {/* register content para */}
-        <p className="font-normal text-auth-form-title leading-[1.4] mb-2">{isRegistration ? 'Get Started Now' : 'Welcome back'}</p>
+        <p className="font-normal text-auth-form-title font-poppins leading-[1.4] mb-2">{isRegistration ? 'Get Started Now' : 'Welcome back'}</p>
         {/* register title */}
-        <h4 className="text-[22px] font-medium text-auth-form-title mb-12.5">{isRegistration ? 'Registration' : 'Login to your account'}</h4>
-        <Button className="bg-white border-1px border-background text-base font-medium text-auth-form-title rounded-md px-15 py-5.5 mb-10">
-          {isRegistration ? 'Get Started Now' : 'Or sign-in with google'}
-        </Button>
+        <h4 className="text-[22px] 2xl:text-[28px] font-medium text-auth-form-title font-poppins mb-12.5">{isRegistration ? 'Registration' : 'Login to your account'}</h4>
+        <div className="flex flex-col items-center">
+          <Button className="flex items-center gap-2 rounded-md max-w-50 lg:max-w-full bg-white border-1px border-background text-[13px] xl:text-base font-medium text-auth-form-title font-poppins px-15 py-5.5 mb-10 hover:bg-white hover:cursor-pointer">
+            <Image
+              src="/icons/google.svg"
+              width={100}
+              height={100}
+              alt="Google"
+              className="w-5 h-5 xl:w-3.5 xl:h-3.5 pt-0.5 hidden min-[350px]:block lg:hidden xl:block"
+            ></Image>
+            {isRegistration ? 'Get Started Now' : 'Or sign-in with google'}
+          </Button>
+        </div>
         <div className="flex items-center gap-4 mb-10">
           <div className="h-[1.8px] flex-1 bg-or-streak" />
           <span className="text-or-streak font-medium">Or</span>
@@ -112,42 +125,95 @@ const AuthForm = ({ type }: { type: TAuthType }) => {
         </div>
       </header>
 
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(onSubmit)}>
         {isRegistration && (
           <>
-            <CustomInput control={form.control} name="firstName" label="First Name" placeholder="Enter your first name" type="text" />
-            <CustomInput control={form.control} name="lastName" label="Last Name" placeholder="Enter your last name" type="text" />
+            <CustomInput
+              control={form.control}
+              name="firstName"
+              label="First Name"
+              placeholder="Enter your first name"
+              type="text"
+              className="mb-3"
+              labelClassName="flex justify-center lg:block"
+            />
+            <CustomInput
+              control={form.control}
+              name="lastName"
+              label="Last Name"
+              placeholder="Enter your last name"
+              type="text"
+              className="mb-3"
+              labelClassName="flex justify-center lg:block"
+            />
           </>
         )}
-        <CustomInput control={form.control} name="email" label="Email" placeholder="Enter your email" type="text" />
-        <CustomInput control={form.control} name="password" label="Password" placeholder="Enter your password" type="password" />
+        <CustomInput
+          control={form.control}
+          name="email"
+          label="Email"
+          placeholder="Enter your email"
+          type="text"
+          className="mb-3"
+          labelClassName="flex justify-center lg:block"
+        />
+        <CustomInput
+          control={form.control}
+          name="password"
+          label="Password"
+          placeholder="Enter your password"
+          type="password"
+          className="mb-3"
+          labelClassName="flex justify-center lg:block"
+        />
+        {isRegistration && (
+          <>
+            <CustomInput
+              control={form.control}
+              name="confirmPassword"
+              label="Confirm Password"
+              placeholder="Re-enter password"
+              type="password"
+              className="mb-3"
+              labelClassName="flex justify-center lg:block"
+            />
+          </>
+        )}
 
-        <div className="flex flex-col gap-4">
-          <Button type="submit" className="form-btn" disabled={isLoading}>
-            {/* isLoading ? 
-            (
-              <>
-                // Spinner/loader component. Comes from lucide-react. Got installed when we installed the sheet component from shadcn.
-                <Loader2 size={20} className="animate-spin mr-2" />
-                Loading...
-              </>
-            )
-            :  */}
+        <div className={cn('mb-10 mt-4 grid justify-center xl:justify-start', !isRegistration ? 'grid-cols-2 gap-5' : '')}>
+          <CustomCheckbox
+            control={form.control}
+            name={isRegistration ? 'agreeToTermsAndConditions' : 'rememberMe'}
+            label={isRegistration ? 'I agree to terms & conditions' : 'Remember me'}
+            labelClassName={cn('text-xs xl:text-nowrap', isRegistration ? 'min-[1400px]:text-base' : 'xl:text-sm')}
+          />
+
+          {!isRegistration && (
+            <Link href="/register" className="text-rest-blue text-xs xl:text-sm text-end xl:text-start min-[1280px]:text-nowrap 2xl:text-end ps-5 xl:ps-0">
+              Forgot password?
+            </Link>
+          )}
+        </div>
+
+        <div className="flex flex-col justify-center items-center gap-4 mb-15 mt-10px">
+          <Button type="submit" className="min-w-50 lg:w-full bg-rest-blue text-base font-semibold py-6.5 hover:bg-rest-blue hover:cursor-pointer" disabled={isLoading}>
             Login now
           </Button>
-
-          <Button type="button" className="form-btn" onClick={() => signIn('github', { callbackUrl: '/posts' })}>
-            Sign in with GitHub
-          </Button>
         </div>
+
+        {/* <Button type="button" className="form-btn" onClick={() => signIn('github', { callbackUrl: '/posts' })}>
+          Sign in with GitHub
+        </Button> */}
       </form>
 
       <section>
-        <footer className="flex justify-center gap-1">
-          <p className="text-14 font-normal text-gray-600">{!isRegistration ? "Don't have an account ?" : 'Already have an account ?'}</p>
-          <Link href={isRegistration ? 'registration' : 'login'} className="form-link">
-            {type === TAuthType.REGISTRATION ? 'Sign In' : 'Sign Up'}
-          </Link>
+        <footer className="flex justify-center">
+          <p className="text-sm font-normal text-gray-500">
+            {!isRegistration ? "Don't have an account?" : 'Already have an account ?'}
+            <Link href={isRegistration ? 'login' : 'registration'} className="ps-1 text-rest-blue">
+              {type === TAuthType.REGISTRATION ? 'Sign In' : 'Create an account'}
+            </Link>
+          </p>
         </footer>
       </section>
     </>
