@@ -20,7 +20,6 @@ import { cn } from '@/lib/utils'
 const AuthForm = ({ type }: { type: TAuthType }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [checked, setChecked] = useState(false)
 
   const router = useRouter()
   const { status } = useSession()
