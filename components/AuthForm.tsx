@@ -107,15 +107,15 @@ const AuthForm = ({ type }: { type: TAuthType }) => {
         {/* register title */}
         <h4 className="text-[22px] 2xl:text-[28px] font-medium text-auth-form-title font-poppins mb-12.5">{isRegistration ? 'Registration' : 'Login to your account'}</h4>
         <div className="flex flex-col items-center">
-          <Button className="flex items-center gap-2 rounded-md max-w-50 lg:max-w-full bg-white border-1px border-background text-[13px] xl:text-base font-medium text-auth-form-title font-poppins px-15 py-5.5 mb-10 hover:bg-white hover:cursor-pointer">
+          <Button className="flex items-center rounded-md max-w-50 lg:max-w-full bg-white border-1px border-background text-[13px] xl:text-base font-medium text-auth-form-title font-poppins px-15 py-5.5 mb-10 hover:bg-white hover:cursor-pointer">
             <Image
               src="/icons/google.svg"
               width={100}
               height={100}
               alt="Google"
-              className="w-5 h-5 xl:w-3.5 xl:h-3.5 pt-0.5 hidden min-[350px]:block lg:hidden xl:block"
+              className="w-5 h-5 xl:w-full xl:h-5.5 pt-0.5 hidden min-[350px]:block lg:hidden xl:block"
             ></Image>
-            {isRegistration ? 'Get Started Now' : 'Or sign-in with google'}
+            {isRegistration ? 'Register with google' : 'Or sign-in with google'}
           </Button>
         </div>
         <div className="flex items-center gap-4 mb-10">
