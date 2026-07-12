@@ -67,5 +67,6 @@ export const RegistrationSchema = z
   })
 
 export type TLoginData = z.infer<typeof LoginSchema>
-export type TRegistrationData = z.infer<typeof RegistrationSchema>
+export type TRegistrationData = z.infer<typeof RegistrationSchema> & { isRegistration?: boolean }
+export type TRegistrationNextAuthData = TRegistrationData & { isRegistration?: boolean }
 export type AuthFormType = TLoginData | TRegistrationData

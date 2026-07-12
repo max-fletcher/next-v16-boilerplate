@@ -10,7 +10,7 @@ import { z } from 'zod'
 import { Resolver, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 // import { Field } from '@base-ui-components/react/field'
-import { AuthFormType, LoginSchema, RegistrationSchema, TRegistrationData } from '@/lib/schema/authForm.schema'
+import { AuthFormType, LoginSchema, RegistrationSchema, TRegistrationNextAuthData } from '@/lib/schema/authForm.schema'
 import CustomInput from './CustomInput'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
@@ -59,7 +59,7 @@ const AuthForm = ({ type }: { type: TAuthType }) => {
       console.log('Authform submit data', data)
       let res
       if (isRegistration) {
-        const { firstName, lastName, email, password, confirmPassword } = data as TRegistrationData
+        const { firstName, lastName, email, password, confirmPassword, isRegistration } = data as TRegistrationNextAuthData
         res = await signIn('credentials', {
           redirect: false,
           firstName: firstName,
@@ -67,8 +67,11 @@ const AuthForm = ({ type }: { type: TAuthType }) => {
           email: email,
           password: password,
           confirmPassword: confirmPassword,
+          isRegistration: isRegistration,
           callbackUrl: '/posts'
         })
+
+        console.log('reg responses', res)
       } else {
         const { email, password } = data
         res = await signIn('credentials', {
@@ -77,10 +80,11 @@ const AuthForm = ({ type }: { type: TAuthType }) => {
           password: password,
           callbackUrl: '/posts'
         })
-      }
 
+        console.log('login responses', res)
+      }
       // Navigate to homepage if logged in
-      if (res?.ok) router.push(res?.url || '/dashboard')
+      if (res?.ok) router.push(res?.url || '/posts')
       else throw new Error(res?.error || 'Invalid credentials')
     } catch (error: unknown) {
       // console.log('onSubmit error', error)
@@ -107,13 +111,14 @@ const AuthForm = ({ type }: { type: TAuthType }) => {
         {/* register title */}
         <h4 className="text-[22px] 2xl:text-[28px] font-medium text-auth-form-title font-poppins mb-12.5">{isRegistration ? 'Registration' : 'Login to your account'}</h4>
         <div className="flex flex-col items-center">
-          <Button className="flex items-center rounded-md max-w-50 lg:max-w-full bg-white border-1px border-background text-[13px] xl:text-base font-medium text-auth-form-title font-poppins px-15 py-5.5 mb-10 hover:bg-white hover:cursor-pointer">
+          <Button className="flex items-center rounded-md lg:max-w-full bg-white border-1px border-background text-[13px] xl:text-base font-medium text-auth-form-title font-poppins px-15 py-5.5 mb-10 hover:bg-white hover:cursor-pointer">
             <Image
               src="/icons/google.svg"
               width={100}
               height={100}
               alt="Google"
-              className="w-5 h-5 xl:w-full xl:h-5.5 pt-0.5 hidden min-[350px]:block lg:hidden xl:block"
+              // xl:w-full
+              className="w-5 h-5 xl:w-8 xl:h-5.5 pt-0.5 hidden min-[350px]:block lg:hidden xl:block"
             ></Image>
             {isRegistration ? 'Register with google' : 'Or sign-in with google'}
           </Button>

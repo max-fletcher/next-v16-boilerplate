@@ -31,7 +31,7 @@ const CustomCheckbox = <T extends FieldValues>({ control, name, label, labelClas
             name={name}
             checked={field.value}
             onCheckedChange={field.onChange}
-            className="data-checked:bg-rest-blue data-checked:border-rest-blue"
+            className="data-checked:bg-rest-blue data-checked:border-rest-blue -mr-1.5"
           />
           <FieldLabel htmlFor={field.name} className={cn('text-base font-medium text-custom-label leading-[1.4]', labelClassName)}>
             {label}
