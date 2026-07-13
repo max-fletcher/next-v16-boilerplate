@@ -19,7 +19,7 @@ const Navbar = () => {
 
   return (
     <>
-      <div className="w-full h-auto bg-white px-2 lg:px-10 xl:px-20 min-[1400px]:px-28!">
+      <div className="w-full h-auto bg-white px-2 lg:px-10 xl:px-16 min-[1400px]:px-28!">
         {/* lg:max-w-290 xl:max-w-325 */}
         <div className="flex items-center justify-between mx-auto">
           <div className="mx-2 my-4">

@@ -1,3 +1,4 @@
 1. Navbar profile arrow dropdown
 2. Navbar notifications icon dropdown
 3. AuthForm and other form error toaster
+4. RBAC

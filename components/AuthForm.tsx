@@ -5,12 +5,9 @@ import { signIn, useSession } from 'next-auth/react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-// import { useForm } from 'react-hook-form'
-import { z } from 'zod'
 import { Resolver, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-// import { Field } from '@base-ui-components/react/field'
-import { AuthFormType, LoginSchema, RegistrationSchema, TRegistrationNextAuthData } from '@/lib/schema/authForm.schema'
+import { TAuthForm, LoginSchema, RegistrationSchema, TRegistrationNextAuthData } from '@/lib/schema/authForm.schema'
 import CustomInput from './CustomInput'
 import { Button } from '@/components/ui/button'
 import Image from 'next/image'
@@ -35,8 +32,8 @@ const AuthForm = ({ type }: { type: TAuthType }) => {
 
   const formSchema = isRegistration ? RegistrationSchema : LoginSchema
   // 1. Define your form.
-  const form = useForm<AuthFormType>({
-    resolver: zodResolver(formSchema) as Resolver<AuthFormType>,
+  const form = useForm<TAuthForm>({
+    resolver: zodResolver(formSchema) as Resolver<TAuthForm>,
     defaultValues: (isRegistration
       ? {
           firstName: '',
@@ -46,11 +43,11 @@ const AuthForm = ({ type }: { type: TAuthType }) => {
           confirmPassword: '',
           agreeToTermsAndConditions: true
         }
-      : { email: '', password: '', rememberMe: true }) as AuthFormType
+      : { email: '', password: '', rememberMe: true }) as TAuthForm
   })
 
   // 2. Define a submit handler.
-  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+  const onSubmit = async (data: TAuthForm) => {
     setError(null)
     setIsLoading(true)
     try {
