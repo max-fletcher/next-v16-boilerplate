@@ -12,6 +12,8 @@
   --color-auth-form-title: #212529;
   --color-rest-blue: #1890FF;
   --color-muted: #F5F5F5;
+  --color-muted2: #666666;
+  --color-newtag-green: #0ACF83;
 }
 
 @theme inline {

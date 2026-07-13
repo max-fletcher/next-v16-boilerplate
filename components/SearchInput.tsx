@@ -16,7 +16,7 @@ interface ISearchInputProps<T extends FieldValues> {
 
 const SearchInput = <T extends FieldValues>({ searchText, setSearchText, name, placeholder, type, autoComplete, className }: ISearchInputProps<T>) => {
   return (
-    <div className="px-2 rounded-full bg-[#F5F5F5] focus-within:bg-white focus-within:ring-1 focus-within:ring-blue-500 focus-within:border-blue-500">
+    <div className="px-2 rounded-full bg-[#F5F5F5] focus-within:bg-white focus-within:ring-1 focus-within:ring-blue-500 focus-within:border-blue-500 w-80 xl:w-110">
       <div className={cn('flex justify-center items-center', className)}>
         <MagnifyingGlassIcon classes="ml-1" />
         <Input
