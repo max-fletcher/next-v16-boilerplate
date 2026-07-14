@@ -42,13 +42,13 @@ const Navbar = () => {
                 </Link>
               </li>
               <li className="px-4 py-7 mx-1 xl:mx-3 border-rest-blue relative">
-                <span className="absolute top-6.5 right-4.5	 w-5 h-5 inline-flex justify-center items-center border border-white p-1 text-xs font-light text-white transform translate-x-1/2 -translate-y-1/2 bg-rest-blue rounded-full">
+                <span className="absolute top-6.5 right-4.5 w-5 h-5 inline-flex justify-center items-center border border-white p-1 text-xs font-light text-white transform translate-x-1/2 -translate-y-1/2 bg-rest-blue rounded-full">
                   6
                 </span>
                 <BellIcon />
               </li>
               <li className={cn(`px-4 py-7 mx-1 xl:mx-3 border-rest-blue relative`, pathname === '/chat' && 'border-b-3')}>
-                <span className="absolute top-6.5 right-4.5	 w-5 h-5 inline-flex justify-center items-center border border-white p-1 text-xs font-light text-white transform translate-x-1/2 -translate-y-1/2 bg-rest-blue rounded-full">
+                <span className="absolute top-6.5 right-4.5 w-5 h-5 inline-flex justify-center items-center border border-white p-1 text-xs font-light text-white transform translate-x-1/2 -translate-y-1/2 bg-rest-blue rounded-full">
                   2
                 </span>
                 <Link href={'/posts'} aria-current="page">

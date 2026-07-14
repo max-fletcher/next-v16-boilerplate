@@ -124,7 +124,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
      * If strategy: 'database', then this callback will not be called at all.
      */
     async jwt({ token, user, trigger, session }) {
-      console.log('reach jwt method', user)
+      // console.log('reach jwt method', user)
       /* Trigger and session will be used when you use useSession() to update session data */
 
       // update session without login/register. "session" contains data that we sent via the update method
@@ -158,7 +158,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     // ** For strategy: 'database', this function will be ran first(not sure about jwt callback) and we will need to set the user like this
     // according to docs (see https://next-auth.js.org/getting-started/client and search "Assuming a strategy: "database" is used....")
     async session({ session, token }) {
-      console.log('reach session method', token)
+      // console.log('reach session method', token)
       // Expose token data to the client session
       session.user.id = token.id
       session.user.accessToken = token.accessToken

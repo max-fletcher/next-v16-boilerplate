@@ -1,9 +1,25 @@
+import { auth } from '@/auth'
 import ExploreMenu from '@/components/ExploreMenu'
 import FeedPostForm from '@/components/FeedPostForm'
 import Navbar from '@/components/Navbar'
+import PostsList from '@/components/PostsList'
 import SideMenu from '@/components/SideMenu'
 
-const page = () => {
+const page = async () => {
+  const session = await auth()
+  const accessToken = session?.user.accessToken
+  console.log('session111', session)
+  console.log('accessToken111', session?.user.accessToken)
+
+  const posts = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/posts2/query`, {
+    cache: 'no-store',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`
+    }
+  }).then((r) => r.json())
+  // console.log('posts111', posts)
+
   return (
     <>
       <Navbar />
@@ -20,6 +36,9 @@ const page = () => {
           <div className="col-span-12 lg:col-span-6">
             <SideMenu>
               <FeedPostForm label="Write Someting" />
+            </SideMenu>
+            <SideMenu>
+              <PostsList initialPosts={posts.response.data.paginatedPosts.posts} />
             </SideMenu>
           </div>
           <div className="col-span-3 hidden lg:block">

@@ -11,8 +11,10 @@
   --color-custom-label: #4A5568;
   --color-auth-form-title: #212529;
   --color-rest-blue: #1890FF;
+  --color-faint-blue: #e4f1fd;
   --color-muted: #F5F5F5;
   --color-muted2: #666666;
+  --color-muted3: rgba(0, 0, 0, 0.46);
   --color-newtag-green: #0ACF83;
 }
 
