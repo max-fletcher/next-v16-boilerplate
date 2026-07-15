@@ -129,8 +129,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       // update session without login/register. "session" contains data that we sent via the update method
       if (trigger === 'update' && session?.user) {
-        token.firstName = session.firstNamename
-        token.lastName = session.lastNameemail
+        token.firstName = session.firstName
+        token.lastName = session.lastName
         token.avatar = session.user.avatar
         token.avatar = session.avatar
         token.background = token.background
@@ -163,8 +163,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.id = token.id
       session.user.accessToken = token.accessToken
       session.user.refreshToken = token.refreshToken
-      token.firstName = token.firstName
-      token.lastName = token.lastName
+      session.user.firstName = token.firstName
+      session.user.lastName = token.lastName
       session.user.avatar = token.avatar
       session.user.background = token.background
       return session

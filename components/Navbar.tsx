@@ -66,7 +66,9 @@ const Navbar = () => {
                 height={150}
                 alt="Profile avatar"
               />
-              <p>Dylan Field</p>
+              <p>
+                {userSession?.user.firstName} {userSession?.user.lastName}
+              </p>
               <button className="ml-3">
                 <ArrowDownIcon />
               </button>
