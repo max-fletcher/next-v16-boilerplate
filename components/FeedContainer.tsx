@@ -3,7 +3,7 @@ import ExploreMenu from '@/components/ExploreMenu'
 import FeedPostForm from '@/components/FeedPostForm'
 import PostsList from '@/components/PostsList'
 import SideMenu from '@/components/SideMenu'
-import { TPost } from '@/types/posts.types'
+import { TComment, TPost } from '@/types/posts.types'
 import { useSession } from 'next-auth/react'
 import { useOptimistic, useState, useTransition } from 'react'
 
@@ -11,17 +11,20 @@ export enum PostActionsEnum {
   ADD_LIKE = 'add-like',
   REMOVE_LIKE = 'remove-like',
   ADD_POST = 'add-post',
-  REMOVE_POST = 'remove-post'
+  REMOVE_POST = 'remove-post',
+  ADD_COMMENT = 'add-comment',
+  REMOVE_COMMENT = 'remove-comment'
 }
 
 type PostAction =
   | { type: PostActionsEnum.ADD_LIKE; postId: string; like: TPost['like'][number] }
   | { type: PostActionsEnum.REMOVE_LIKE; postId: string; userId: string }
   | { type: PostActionsEnum.ADD_POST; post: TPost }
-  | { type: PostActionsEnum.REMOVE_POST; postId: string } // for rollback on failure
+  | { type: PostActionsEnum.REMOVE_POST; postId: string }
+  | { type: PostActionsEnum.ADD_COMMENT; postId: string; comment: TComment }
+  | { type: PostActionsEnum.REMOVE_COMMENT; postId: string; commentId: string }
 
 const FeedContainer = ({ initialPosts }: { initialPosts: TPost[] }) => {
-  console.log('FeedPostBoi boi', initialPosts)
   const [posts, setPosts] = useState<TPost[]>(initialPosts)
   const [isPending, startTransition] = useTransition()
   const { data: session } = useSession()
@@ -52,6 +55,31 @@ const FeedContainer = ({ initialPosts }: { initialPosts: TPost[] }) => {
         return [action.post, ...currentPosts] // attach new post at the front
       case PostActionsEnum.REMOVE_POST:
         return currentPosts.filter((p) => p.id !== action.postId)
+
+      case PostActionsEnum.ADD_COMMENT:
+        return currentPosts.map((post) =>
+          post.id === action.postId
+            ? {
+                ...post,
+                comments: [action.comment, ...post.comments],
+                _count: {
+                  ...post._count
+                }
+              }
+            : post
+        )
+      case PostActionsEnum.REMOVE_COMMENT:
+        return currentPosts.map((post) =>
+          post.id === action.postId
+            ? {
+                ...post,
+                comments: post.comments.filter((c) => c.id !== action.commentId),
+                _count: {
+                  ...post._count
+                }
+              }
+            : post
+        )
 
       default:
         return currentPosts
@@ -99,8 +127,6 @@ const FeedContainer = ({ initialPosts }: { initialPosts: TPost[] }) => {
           })
         })
 
-        console.log('res111222', res)
-
         if (!res.ok) throw new Error('Like request failed')
 
         const json = await res.json()
@@ -141,8 +167,7 @@ const FeedContainer = ({ initialPosts }: { initialPosts: TPost[] }) => {
           })
         )
       } catch (err) {
-        // no manual rollback needed — optimisticPosts derives from posts,
-        // and since setPosts never ran, optimistic UI reverts automatically
+        // rollback — remove the optimistic like if it fails. Transition ends so no manual removal needed.
         console.error(err)
       }
     })
@@ -150,8 +175,6 @@ const FeedContainer = ({ initialPosts }: { initialPosts: TPost[] }) => {
 
   function handleCreatePost(body: string, image?: File | null) {
     if (!session?.user) return
-
-    console.log('handleCreatePost', body, image)
 
     const tempId = `temp-${Date.now()}`
 
@@ -164,10 +187,12 @@ const FeedContainer = ({ initialPosts }: { initialPosts: TPost[] }) => {
         id: session.user.id,
         firstName: session.user.firstName ?? '',
         lastName: session.user.lastName ?? '',
-        email: session.user.email ?? ''
+        email: session.user.email ?? '',
+        avatar: session.user.avatar ?? ''
       },
       _count: { like: 0 },
-      like: []
+      like: [],
+      comments: []
     }
 
     startTransition(async () => {
@@ -209,6 +234,63 @@ const FeedContainer = ({ initialPosts }: { initialPosts: TPost[] }) => {
     })
   }
 
+  function handleCreateComment(body: string, postId: string) {
+    if (!session?.user) return
+
+    const tempId = `temp-${Date.now()}`
+
+    const optimisticComment: TComment = {
+      id: tempId,
+      postId,
+      userId: session.user.id,
+      body,
+      user: {
+        id: session.user.id,
+        firstName: session.user.firstName ?? '',
+        lastName: session.user.lastName ?? '',
+        avatar: session.user.avatar ?? null
+      }
+    }
+
+    startTransition(async () => {
+      applyOptimisticAction({ type: PostActionsEnum.ADD_COMMENT, postId, comment: optimisticComment })
+
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/comments`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${session.user.accessToken}`
+          },
+          body: JSON.stringify({ postId, body })
+        })
+
+        if (!res.ok) throw new Error('Failed to create comment')
+
+        const json = await res.json()
+        const realComment: TComment = json.response.data.comment
+
+        setPosts((prev) =>
+          prev.map((p) =>
+            p.id === postId
+              ? {
+                  ...p,
+                  comments: [realComment, ...p.comments],
+                  _count: {
+                    ...p._count
+                  }
+                }
+              : p
+          )
+        )
+      } catch (err) {
+        console.error(err)
+        // rollback — remove the optimistic comment if it fails. Transition ends so no manual removal needed.
+      }
+    })
+  }
+
   return (
     <>
       <div className="w-full grid grid-cols-12 gap-3 my-3">
@@ -221,11 +303,7 @@ const FeedContainer = ({ initialPosts }: { initialPosts: TPost[] }) => {
           <SideMenu>
             <FeedPostForm label="Write Someting" handleCreatePost={handleCreatePost} isPending={isPending} />
           </SideMenu>
-          {posts.length > 0 && (
-            <SideMenu>
-              <PostsList optimisticPosts={optimisticPosts} handleLike={handleLike} isPending={isPending} />
-            </SideMenu>
-          )}
+          {posts.length > 0 && <PostsList optimisticPosts={optimisticPosts} handleLike={handleLike} handleCreateComment={handleCreateComment} isPending={isPending} />}
         </div>
         <div className="col-span-3 hidden lg:block">
           <SideMenu>

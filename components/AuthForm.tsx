@@ -52,7 +52,6 @@ const AuthForm = ({ type }: { type: TAuthType }) => {
     setIsLoading(true)
     try {
       // Sign up or sign in using next-auth's signIn function
-      console.log('Authform submit data', data)
       let res
       if (isRegistration) {
         const { firstName, lastName, email, password, confirmPassword, isRegistration } = data as TRegistrationNextAuthData
@@ -67,7 +66,7 @@ const AuthForm = ({ type }: { type: TAuthType }) => {
           callbackUrl: '/posts'
         })
 
-        console.log('reg responses', res)
+        // console.log('reg responses', res)
       } else {
         const { email, password } = data
         res = await signIn('credentials', {
@@ -77,7 +76,7 @@ const AuthForm = ({ type }: { type: TAuthType }) => {
           callbackUrl: '/posts'
         })
 
-        console.log('login responses', res)
+        // console.log('login responses', res)
       }
       // Navigate to homepage if logged in
       if (res?.ok) router.push(res?.url || '/posts')

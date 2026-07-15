@@ -8,6 +8,7 @@ export type TPost = {
     firstName: string
     lastName: string
     email: string
+    avatar: string
   }
   _count: {
     like: number
@@ -22,4 +23,18 @@ export type TPost = {
       avatar: string | null
     }
   }[]
+  comments: TComment[]
+}
+
+export type TComment = {
+  id: string
+  postId: string
+  userId: string
+  body: string
+  user: {
+    id: string
+    firstName: string
+    lastName: string
+    avatar: string | null
+  }
 }

@@ -8,4 +8,4 @@ export const CreateCommentSchema = z.object({
     .nonempty({ error: 'Body is required.' })
 })
 
-export type TCreatePost = z.infer<typeof CreateCommentSchema>
+export type TCreateComment = z.infer<typeof CreateCommentSchema>

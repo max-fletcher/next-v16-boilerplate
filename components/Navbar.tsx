@@ -11,15 +11,17 @@ import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import MagnifyingGlassIcon from './icons/MagnifyingGlass'
 import ArrowDownIcon from './icons/ArrowDown'
+import { useSession } from 'next-auth/react'
 
 const Navbar = () => {
+  const { data: userSession } = useSession()
   const [searchText, setSearchText] = useState('')
 
   const pathname = usePathname()
 
   return (
     <>
-      <div className="w-full h-auto bg-white px-2 lg:px-10 xl:px-16 min-[1400px]:px-28!">
+      <div className="sticky top-0 z-50 w-full h-auto bg-white px-2 lg:px-10 xl:px-16 min-[1400px]:px-28!">
         {/* lg:max-w-290 xl:max-w-325 */}
         <div className="flex items-center justify-between mx-auto">
           <div className="mx-2 my-4">
@@ -57,7 +59,13 @@ const Navbar = () => {
               </li>
             </ul>
             <div className="flex items-center">
-              <Image className="w-10 mr-3 rounded-full border-2 border-rest-blue" src="/images/avatars/people1.png" width={150} height={150} alt="Profile avatar" />
+              <Image
+                className="w-10 mr-3 rounded-full border-2 border-rest-blue"
+                src={userSession?.user.avatar ?? `/images/avatars/people1.png`}
+                width={150}
+                height={150}
+                alt="Profile avatar"
+              />
               <p>Dylan Field</p>
               <button className="ml-3">
                 <ArrowDownIcon />

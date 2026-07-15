@@ -1,12 +1,22 @@
 'use client'
-import SinglePost from './SinglePost'
 import { TPost } from '@/types/posts.types'
+import SideMenu from './SideMenu'
+import SinglePost from './SinglePost'
 
-const PostsList = ({ optimisticPosts, handleLike, isPending }: { optimisticPosts: TPost[]; handleLike: (post: TPost) => void; isPending: boolean }) => {
+type TPostsListProps = {
+  optimisticPosts: TPost[]
+  handleLike: (post: TPost) => void
+  handleCreateComment: (body: string, postId: string) => void
+  isPending: boolean
+}
+
+const PostsList = ({ optimisticPosts, handleLike, handleCreateComment, isPending }: TPostsListProps) => {
   return (
     <>
       {optimisticPosts.map((post) => (
-        <SinglePost key={post.id} post={post} onLike={handleLike} isPending={isPending} />
+        <SideMenu key={post.id}>
+          <SinglePost key={post.id} post={post} onLike={handleLike} handleCreateComment={handleCreateComment} isPending={isPending} />
+        </SideMenu>
       ))}
     </>
   )

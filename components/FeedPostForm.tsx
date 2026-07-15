@@ -14,6 +14,7 @@ import NotepadIcon from './icons/Notepad'
 import { Button } from './ui/button'
 import PaperPlaneIcon from './icons/PaperPlane'
 import { useRef } from 'react'
+import { useSession } from 'next-auth/react'
 
 export interface IFeedPostProps {
   label: string
@@ -38,6 +39,8 @@ const FeedPostFormUploadItems = [
 ]
 
 const FeedPostForm = ({ label, className, isPending, handleCreatePost }: IFeedPostProps) => {
+  const { data: userSession } = useSession()
+
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const form = useForm<TCreatePost>({
     resolver: zodResolver(CreatePostSchema),
@@ -47,7 +50,6 @@ const FeedPostForm = ({ label, className, isPending, handleCreatePost }: IFeedPo
   })
 
   const onSubmit = async (data: TCreatePost) => {
-    console.log('FeedPostForm onSubmit', data)
     handleCreatePost(data.body, data.image)
     form.reset()
   }
@@ -55,7 +57,13 @@ const FeedPostForm = ({ label, className, isPending, handleCreatePost }: IFeedPo
   return (
     <>
       <div className="grid grid-cols-12">
-        <Image className="col-span-1 min-w-10 mr-1 aspect-square rounded-full" src="/images/avatars/txt_img.png" width={150} height={150} alt="Profile avatar" />
+        <Image
+          className="col-span-1 min-w-10 mr-1 aspect-square rounded-full"
+          src={userSession?.user.avatar ?? `/images/avatars/txt_img.png`}
+          width={150}
+          height={150}
+          alt="Profile avatar"
+        />
         <form id="create-post-form" onSubmit={form.handleSubmit(onSubmit)} className="w-full col-span-11">
           <Controller
             name="body"

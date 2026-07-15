@@ -6,15 +6,16 @@ import HahaIcon from './icons/Haha'
 import WordBalloonIcon from './icons/WordBalloon'
 import ShareArrowIcon from './icons/ShareArrow'
 import { TPost } from '@/types/posts.types'
+import FeedCommentForm from './CommentPostForm'
 
 type TSinglePostProps = {
   post: TPost
   onLike: (post: TPost) => void
+  handleCreateComment: (body: string, postId: string) => void
   isPending: boolean
 }
 
-const SinglePost = ({ post, onLike, isPending }: TSinglePostProps) => {
-  console.log('SinglePost', post, post.image)
+const SinglePost = ({ post, onLike, isPending, handleCreateComment }: TSinglePostProps) => {
   const { data: session } = useSession()
 
   const showLikeAvatarCount = 5
@@ -27,10 +28,16 @@ const SinglePost = ({ post, onLike, isPending }: TSinglePostProps) => {
     <>
       <div>
         <div className="flex">
-          <Image className="mr-1 w-14 h-14 aspect-square rounded-full" src="/images/avatars/txt_img.png" width={60} height={60} alt="Author avatar" />
+          <Image
+            className="mr-1 w-14 h-14 aspect-square rounded-full"
+            src={post.author.avatar ?? `/images/avatars/txt_img.png`}
+            width={60}
+            height={60}
+            alt="Author avatar"
+          />
           <div className="ml-3 mb-5">
             <h6 className="text-xl mb-1.5">
-              {post.author.firstName} {post.author.firstName}
+              {post.author.firstName} {post.author.lastName}
             </h6>
             <p className="text-[14px] text-muted2"> {post.createdAt} . Public</p>
           </div>
@@ -38,7 +45,7 @@ const SinglePost = ({ post, onLike, isPending }: TSinglePostProps) => {
         <div className="mb-5">{post.body}</div>
         {post.image && <Image className="w-full rounded-md mb-5" src={post.image} width={1000} height={1000} alt="Post image" />}
 
-        <div className="flex justify-between items-center mb-5">
+        <div className="flex justify-between items-center mb-3">
           <div className="flex items-center">
             {displayedAvatars.map((like, index) => (
               <Image
@@ -100,7 +107,9 @@ const SinglePost = ({ post, onLike, isPending }: TSinglePostProps) => {
             <ShareArrowIcon classes="mr-1" /> Share
           </button>
         </div>
-        <div></div>
+        <div>
+          <FeedCommentForm placeholder="Write a comment" isPending={isPending} post={post} handleCreateComment={handleCreateComment} />
+        </div>
       </div>
     </>
   )

@@ -6,8 +6,6 @@ import { TPost } from '@/types/posts.types'
 const page = async () => {
   const session = await auth()
   const accessToken = session?.user.accessToken
-  console.log('session111', session)
-  console.log('accessToken111', session?.user.accessToken)
 
   // Define your parameters as an object
   const params = {

@@ -2,4 +2,3 @@
 2. Navbar notifications icon dropdown(X)
 3. AuthForm and other form error toaster
 4. RBAC frontend ??
-6. Optimistic Updates for toggling like/unlike + refetching data on posting new data
