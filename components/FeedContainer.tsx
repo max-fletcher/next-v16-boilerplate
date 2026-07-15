@@ -148,15 +148,17 @@ const FeedContainer = ({ initialPosts }: { initialPosts: TPost[] }) => {
     })
   }
 
-  function handleCreatePost(body: string, imageFile?: File | null) {
+  function handleCreatePost(body: string, image?: File | null) {
     if (!session?.user) return
+
+    console.log('handleCreatePost', body, image)
 
     const tempId = `temp-${Date.now()}`
 
     const optimisticPost: TPost = {
       id: tempId,
       body,
-      image: imageFile ? URL.createObjectURL(imageFile) : undefined, // using blob for local preview. Will delete below.
+      image: image ? URL.createObjectURL(image) : undefined, // using blob for local preview. Will delete below.
       createdAt: new Date().toISOString(),
       author: {
         id: session.user.id,
@@ -176,7 +178,7 @@ const FeedContainer = ({ initialPosts }: { initialPosts: TPost[] }) => {
         const formData = new FormData()
         formData.append('body', body)
         formData.append('userId', session.user.id)
-        if (imageFile) formData.append('image', imageFile)
+        if (image) formData.append('image', image)
 
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/posts2`, {
           method: 'POST',
@@ -219,9 +221,11 @@ const FeedContainer = ({ initialPosts }: { initialPosts: TPost[] }) => {
           <SideMenu>
             <FeedPostForm label="Write Someting" handleCreatePost={handleCreatePost} isPending={isPending} />
           </SideMenu>
-          <SideMenu>
-            <PostsList optimisticPosts={optimisticPosts} handleLike={handleLike} isPending={isPending} />
-          </SideMenu>
+          {posts.length > 0 && (
+            <SideMenu>
+              <PostsList optimisticPosts={optimisticPosts} handleLike={handleLike} isPending={isPending} />
+            </SideMenu>
+          )}
         </div>
         <div className="col-span-3 hidden lg:block">
           <SideMenu>

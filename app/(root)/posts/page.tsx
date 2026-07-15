@@ -9,7 +9,17 @@ const page = async () => {
   console.log('session111', session)
   console.log('accessToken111', session?.user.accessToken)
 
-  const data = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/posts2/query`, {
+  // Define your parameters as an object
+  const params = {
+    page: '1',
+    limit: '100',
+    orderBy: 'createdAt',
+    order: 'desc'
+  }
+  // Convert object to query string: "category=electronics&limit=10&search=smart+watch"
+  const queryString = new URLSearchParams(params).toString()
+
+  const data = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/posts2/query?${queryString}`, {
     cache: 'no-store',
     headers: {
       'Content-Type': 'application/json',

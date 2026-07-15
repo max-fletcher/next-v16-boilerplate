@@ -13,19 +13,16 @@ import CalendarIcon from './icons/Calendar'
 import NotepadIcon from './icons/Notepad'
 import { Button } from './ui/button'
 import PaperPlaneIcon from './icons/PaperPlane'
+import { useRef } from 'react'
 
 export interface IFeedPostProps {
   label: string
   className?: string
   isPending: boolean
-  handleCreatePost: (body: string, imageFile?: File | null) => void
+  handleCreatePost: (body: string, image?: File | null) => void
 }
 
 const FeedPostFormUploadItems = [
-  {
-    icon: <PictureIcon classes="mr-2" height={25} />,
-    title: 'Photo'
-  },
   {
     icon: <VideoIcon classes="mr-2" height={25} />,
     title: 'Video'
@@ -41,6 +38,7 @@ const FeedPostFormUploadItems = [
 ]
 
 const FeedPostForm = ({ label, className, isPending, handleCreatePost }: IFeedPostProps) => {
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
   const form = useForm<TCreatePost>({
     resolver: zodResolver(CreatePostSchema),
     defaultValues: {
@@ -48,10 +46,9 @@ const FeedPostForm = ({ label, className, isPending, handleCreatePost }: IFeedPo
     }
   })
 
-  // handleCreatePost(body: string, imageFile: File | null)
   const onSubmit = async (data: TCreatePost) => {
     console.log('FeedPostForm onSubmit', data)
-    handleCreatePost(data.body)
+    handleCreatePost(data.body, data.image)
     form.reset()
   }
 
@@ -88,15 +85,35 @@ const FeedPostForm = ({ label, className, isPending, handleCreatePost }: IFeedPo
               </Field>
             )}
           />
+          <Controller
+            name="image"
+            control={form.control}
+            render={({ field: { onChange, name } }) => (
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                name={name}
+                ref={fileInputRef}
+                className="hidden"
+                onChange={(e) => onChange(e.target.files?.[0] ?? null)}
+              />
+            )}
+          />
         </form>
       </div>
       <div className="w-full flex justify-center items-center">
         <div className="grid grid-cols-12 justify-center items-center w-full rounded bg-[#1890ff0d] mt-2.5 px-4 h-auto pt-3 lg:pt-0">
-          {FeedPostFormUploadItems.map((FeedPostFormUploadItem, index) => (
-            <div key={index} className="flex justify-center items-center col-span-3 lg:col-span-2 text-muted2">
+          <button onClick={() => fileInputRef.current?.click()} disabled={isPending} className="flex justify-center items-center col-span-3 lg:col-span-2 text-muted2">
+            <span>
+              <PictureIcon classes="mr-2" height={25} />
+            </span>
+            <span className="hidden md:block lg:hidden xl:block">Photo</span>
+          </button>
+          {FeedPostFormUploadItems.map((FeedPostFormUploadItem) => (
+            <button key={FeedPostFormUploadItem.title} className="flex justify-center items-center col-span-3 lg:col-span-2 text-muted2">
               <span>{FeedPostFormUploadItem.icon}</span>
               <span className="hidden md:block lg:hidden xl:block">{FeedPostFormUploadItem.title}</span>
-            </div>
+            </button>
           ))}
           <span className="col-span-2 lg:col-span-1"></span>
           <Button type="submit" form="create-post-form" disabled={isPending} className="col-span-12 lg:col-span-3 items-center m-2 lg:max-w-xl xl:h-12 bg-[#377DFF]">
