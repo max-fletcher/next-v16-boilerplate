@@ -70,9 +70,9 @@ const FeedCommentForm = ({ placeholder, className, isPending, post, handleCreate
         </form>
       </div>
       <div>
-        {post.comments.length > 0 && (
+        {post.comments && post.comments.length > 0 && (
           <div className="">
-            {post.comments.map((comment, index) => (
+            {post.comments.map((comment) => (
               <div key={comment.id} className={cn(`flex mt-2`)}>
                 <div className="w-10 h-10">
                   <Image
