@@ -1,18 +1,26 @@
 'use client'
 import { useSession } from 'next-auth/react'
 import Image from 'next/image'
-import { TPost } from './PostsList'
 import { cn } from '@/lib/utils'
 import HahaIcon from './icons/Haha'
 import WordBalloonIcon from './icons/WordBalloon'
 import ShareArrowIcon from './icons/ShareArrow'
+import { TPost } from '@/types/posts.types'
 
-const SinglePost = ({ post, onLike, isPending }: { post: TPost; onLike: (post: TPost) => void; isPending: boolean }) => {
+type TSinglePostProps = {
+  post: TPost
+  onLike: (post: TPost) => void
+  isPending: boolean
+}
+
+const SinglePost = ({ post, onLike, isPending }: TSinglePostProps) => {
+  console.log('SinglePost', post, post.image)
   const { data: session } = useSession()
 
+  const showLikeAvatarCount = 5
   const likedByUser = post.like.find((like) => like.user.id === session?.user.id)
   const likesWithAvatars = post.like.filter((like) => like.user.avatar)
-  const displayedAvatars = likesWithAvatars.slice(0, 5)
+  const displayedAvatars = likesWithAvatars.slice(0, showLikeAvatarCount)
   const remainingLikes = Math.max(0, post._count.like - displayedAvatars.length)
 
   return (
@@ -28,14 +36,14 @@ const SinglePost = ({ post, onLike, isPending }: { post: TPost; onLike: (post: T
           </div>
         </div>
         <div className="mb-5">{post.body}</div>
-        <Image className="w-full rounded-md mb-5" src={post.image} width={1000} height={1000} alt="Post image" />
+        {post.image && <Image className="w-full rounded-md mb-5" src={post.image} width={1000} height={1000} alt="Post image" />}
 
         <div className="flex justify-between items-center mb-5">
           <div className="flex items-center">
             {displayedAvatars.map((like, index) => (
               <Image
                 key={like.id}
-                src={like.user.avatar}
+                src={like.user.avatar!}
                 alt={`${like.user.firstName} ${like.user.lastName}`}
                 width={60}
                 height={60}
@@ -49,7 +57,8 @@ const SinglePost = ({ post, onLike, isPending }: { post: TPost; onLike: (post: T
                   displayedAvatars.length > 0 && '-ml-5'
                 )}
               >
-                {remainingLikes}+
+                {remainingLikes}
+                {displayedAvatars.length > showLikeAvatarCount && '+'}
               </div>
             )}
           </div>
@@ -63,7 +72,7 @@ const SinglePost = ({ post, onLike, isPending }: { post: TPost; onLike: (post: T
           </div>
         </div>
         <div className="grid grid-cols-9">
-          <div
+          <button
             onClick={() => onLike(post)}
             aria-disabled={isPending}
             className={cn(
@@ -79,18 +88,19 @@ const SinglePost = ({ post, onLike, isPending }: { post: TPost; onLike: (post: T
             ) : (
               'Like'
             )}
-          </div>
-          <div
+          </button>
+          <button
             className={cn(`col-span-3 flex justify-center items-center m-1 p-3 hover:bg-faint-blue delay-100 transition-call duration-200 ease-in-out cursor-pointer`)}
           >
             <WordBalloonIcon classes="mr-1" /> Comment
-          </div>
-          <div
+          </button>
+          <button
             className={cn(`col-span-3 flex justify-center items-center m-1 p-3 hover:bg-faint-blue delay-100 transition-call duration-200 ease-in-out cursor-pointer`)}
           >
             <ShareArrowIcon classes="mr-1" /> Share
-          </div>
+          </button>
         </div>
+        <div></div>
       </div>
     </>
   )

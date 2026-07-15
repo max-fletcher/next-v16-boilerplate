@@ -3,44 +3,28 @@ import Image from 'next/image'
 import { Controller, useForm } from 'react-hook-form'
 import { CreatePostSchema, TCreatePost } from '@/lib/schema/createPost.schema'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useState } from 'react'
+import { useSession } from 'next-auth/react'
 import { Field, FieldError, FieldLabel } from './ui/field'
+import { useRouter } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import { Textarea } from './ui/textarea'
 import PenIcon from './icons/Pen'
-import PictureIcon from './icons/Picture'
-import VideoIcon from './icons/Video'
-import CalendarIcon from './icons/Calendar'
-import NotepadIcon from './icons/Notepad'
 import { Button } from './ui/button'
 import PaperPlaneIcon from './icons/PaperPlane'
 
-export interface IFeedPostProps {
+export interface IFeedPostInputProps {
   label: string
   className?: string
-  isPending: boolean
-  handleCreatePost: (body: string, imageFile?: File | null) => void
 }
 
-const FeedPostFormUploadItems = [
-  {
-    icon: <PictureIcon classes="mr-2" height={25} />,
-    title: 'Photo'
-  },
-  {
-    icon: <VideoIcon classes="mr-2" height={25} />,
-    title: 'Video'
-  },
-  {
-    icon: <CalendarIcon classes="mr-2" height={23} />,
-    title: 'Event'
-  },
-  {
-    icon: <NotepadIcon classes="mr-2" height={25} />,
-    title: 'Articles'
-  }
-]
+const CommentPostForm = ({ label, className }: IFeedPostInputProps) => {
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-const FeedPostForm = ({ label, className, isPending, handleCreatePost }: IFeedPostProps) => {
+  const router = useRouter()
+  const { data: userData } = useSession()
+
   const form = useForm<TCreatePost>({
     resolver: zodResolver(CreatePostSchema),
     defaultValues: {
@@ -48,11 +32,37 @@ const FeedPostForm = ({ label, className, isPending, handleCreatePost }: IFeedPo
     }
   })
 
-  // handleCreatePost(body: string, imageFile: File | null)
   const onSubmit = async (data: TCreatePost) => {
-    console.log('FeedPostForm onSubmit', data)
-    handleCreatePost(data.body)
-    form.reset()
+    setError(null)
+    setIsLoading(true)
+    try {
+      console.log('create post submit 1', data)
+
+      const { body } = data
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/post`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          body: body
+        })
+      })
+
+      console.log('create post submit responses', res)
+      // Navigate to homepage if logged in
+      if (res?.ok) router.push(res?.url || '/posts')
+      else throw new Error('Error submitting post.')
+      //   else throw new Error(res?.error || 'Invalid credentials')
+    } catch (error: unknown) {
+      // console.log('onSubmit error', error)
+
+      if (error instanceof Error) {
+        setError(error.message?.replace(/^Error:\s*/, '') || 'Something went wrong')
+      } else {
+        setError('Something went wrong')
+      }
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -99,7 +109,7 @@ const FeedPostForm = ({ label, className, isPending, handleCreatePost }: IFeedPo
             </div>
           ))}
           <span className="col-span-2 lg:col-span-1"></span>
-          <Button type="submit" form="create-post-form" disabled={isPending} className="col-span-12 lg:col-span-3 items-center m-2 lg:max-w-xl xl:h-12 bg-[#377DFF]">
+          <Button type="submit" form="create-post-form" disabled={isLoading} className="col-span-12 lg:col-span-3 items-center m-2 lg:max-w-xl xl:h-12 bg-[#377DFF]">
             <PaperPlaneIcon />
             Post
           </Button>
@@ -109,4 +119,4 @@ const FeedPostForm = ({ label, className, isPending, handleCreatePost }: IFeedPo
   )
 }
 
-export default FeedPostForm
+export default CommentPostForm

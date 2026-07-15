@@ -1,9 +1,7 @@
 import { auth } from '@/auth'
-import ExploreMenu from '@/components/ExploreMenu'
-import FeedPostForm from '@/components/FeedPostForm'
+import FeedContainer from '@/components/FeedContainer'
 import Navbar from '@/components/Navbar'
-import PostsList from '@/components/PostsList'
-import SideMenu from '@/components/SideMenu'
+import { TPost } from '@/types/posts.types'
 
 const page = async () => {
   const session = await auth()
@@ -19,34 +17,13 @@ const page = async () => {
     }
   }).then((r) => r.json())
   // console.log('posts111', posts)
+  const posts = data.response.data.paginatedPosts.posts as TPost[]
 
   return (
     <>
       <Navbar />
       <div className="px-2 lg:px-10 xl:px-16 min-[1400px]:px-28!">
-        <div className="w-full grid grid-cols-12 gap-3 my-3">
-          <div className="col-span-3 hidden lg:block">
-            <SideMenu title="Explore">
-              <ExploreMenu />
-            </SideMenu>
-            <SideMenu title="Explore">
-              <ExploreMenu />
-            </SideMenu>
-          </div>
-          <div className="col-span-12 lg:col-span-6">
-            <SideMenu>
-              <FeedPostForm label="Write Someting" />
-            </SideMenu>
-            <SideMenu>
-              <PostsList initialPosts={data.response.data.paginatedPosts.posts} />
-            </SideMenu>
-          </div>
-          <div className="col-span-3 hidden lg:block">
-            <SideMenu>
-              <div>Left</div>
-            </SideMenu>
-          </div>
-        </div>
+        <FeedContainer initialPosts={posts} />
       </div>
     </>
   )

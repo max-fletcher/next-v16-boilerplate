@@ -1,6 +1,6 @@
 import { z } from 'zod'
 
-export const CreatePostSchema = z.object({
+export const CreateCommentSchema = z.object({
   body: z
     .string({
       error: (issue) => (issue.input === undefined ? 'Body is required.' : 'Body must be a string.')
@@ -8,4 +8,4 @@ export const CreatePostSchema = z.object({
     .nonempty({ error: 'Body is required.' })
 })
 
-export type TCreatePost = z.infer<typeof CreatePostSchema>
+export type TCreatePost = z.infer<typeof CreateCommentSchema>

@@ -45,7 +45,7 @@ const ExploreMenu = () => {
     {
       icon: <ConsoleIcon classes="mr-3.5" />,
       title: 'Gaming',
-      new: false,
+      new: true,
       link: '/gaming'
     },
     {
