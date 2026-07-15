@@ -11,7 +11,7 @@ const page = async () => {
   console.log('session111', session)
   console.log('accessToken111', session?.user.accessToken)
 
-  const posts = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/posts2/query`, {
+  const data = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/posts2/query`, {
     cache: 'no-store',
     headers: {
       'Content-Type': 'application/json',
@@ -38,7 +38,7 @@ const page = async () => {
               <FeedPostForm label="Write Someting" />
             </SideMenu>
             <SideMenu>
-              <PostsList initialPosts={posts.response.data.paginatedPosts.posts} />
+              <PostsList initialPosts={data.response.data.paginatedPosts.posts} />
             </SideMenu>
           </div>
           <div className="col-span-3 hidden lg:block">

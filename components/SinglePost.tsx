@@ -7,12 +7,10 @@ import HahaIcon from './icons/Haha'
 import WordBalloonIcon from './icons/WordBalloon'
 import ShareArrowIcon from './icons/ShareArrow'
 
-const SinglePost = ({ post }: { post: TPost }) => {
-  console.log('SinglePost', post, post.image)
+const SinglePost = ({ post, onLike, isPending }: { post: TPost; onLike: (post: TPost) => void; isPending: boolean }) => {
   const { data: session } = useSession()
 
   const likedByUser = post.like.find((like) => like.user.id === session?.user.id)
-
   const likesWithAvatars = post.like.filter((like) => like.user.avatar)
   const displayedAvatars = likesWithAvatars.slice(0, 5)
   const remainingLikes = Math.max(0, post._count.like - displayedAvatars.length)
@@ -66,6 +64,8 @@ const SinglePost = ({ post }: { post: TPost }) => {
         </div>
         <div className="grid grid-cols-9">
           <div
+            onClick={() => onLike(post)}
+            aria-disabled={isPending}
             className={cn(
               `col-span-3 flex justify-center items-center m-1 p-3 hover:bg-faint-blue delay-100 transition-call duration-200 ease-in-out cursor-pointer`,
               likedByUser && 'bg-faint-blue'
